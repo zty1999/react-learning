@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>learning-react</title>
+  <!-- react核心库 React -->
+  <script src="https://cdn.bootcss.com/react/16.8.6/umd/react.development.js"></script>
+  <!-- react-dom 支撑react操作Dom ReactDom -->
+  <script src="https://cdn.bootcss.com/react-dom/16.8.6/umd/react-dom.development.js"></script>
+  <!-- 将jsx转为js -->
+  <script src="https://cdn.bootcss.com/babel-standalone/6.26.0/babel.js"></script>
+</head>
+
+<body>
+  <div id="test"></div>
+  <script type="text/babel"> /* 写的是jsx 所以写text/babel而不是text/javascript */
+    /*   
+      JSX:
+      特点：字符串和标签可以混用
+
+    */
+
+    // 1. 定义数据
+    let message= "this is a message";
+    // 2. 创建虚拟DOM
+    // let VDOM = <h1>hello,React</h1>;
+    let VDOM = (
+      <h1>hello,React <span>{message}</span></h1>
+    );
+
+    // 3. 虚拟DOM转真实DOM 插入到页面
+    // ReactDOM.render(虚拟DOM,容器)
+    ReactDOM.render(VDOM,document.getElementById("test"))
+
+    
+    console.log(VDOM);
+  </script>
+</body>
+
+</html>

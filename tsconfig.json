@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "allowUmdGlobalAccess": true, // 允许在模块中全局变量的方式访问umd模块
+    "noImplicitAny": false, // 关闭默认any类型检查
+    "types": ["node"],
+    "baseUrl": "./",
+    "paths": {
+      "@/": ["src/"],
+      "@app:*/": ["src/apps/*/"],
+      "@rentHouse/*": ["src/apps/rentHouse/*"],
+      "@redux/*": ["src/redux/*"],
+      "@routes/*": ["src/routes/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "config/**/*.js", "**/*.spec.ts"]
+}
