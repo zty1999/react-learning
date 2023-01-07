@@ -767,6 +767,196 @@ console.log(this.textRef.current.value);
 
 
 ## react hooks
+### useState
+### useEffect
+可以模拟class组件的生命周期，但比生命周期更加强大
+
+一个函数组件中可以有多个useEffect ，按照effect声明的顺序依次执行
+```tsx
+  // useEffect(回调函数,state 值发生变化时重新执行) 在执行完当前组件渲染后要执行的副作用代码
+  // 回调函数完成副作用操作 在组件渲染完成后自动执行 state声明当该值发生变化时回调函数才重新执行，可以传入空数组，不被其它值影响
+  // 回调函数返回值:返回一个回调函数取消监听 清除副作用 => 组件被重新渲染或组件卸载时执行
+  // 优点：集中处理单一逻辑代码  增加代码内聚性
+  useEffect(()=>{
+      return () =>{
+      }
+  },[])
+```
+
+### useContext
+const value = useContext(MyContext);
+接收一个 context 对象（React.createContext 的返回值）并返回该 context 的当前值。
+当组件上层最近的 <MyContext.Provider> 更新时，该 Hook 会触发重渲染，并使用最新传递给 MyContext provider 的 context value 值。即使祖先使用 React.memo 或 shouldComponentUpdate，也会在组件本身使用 useContext 时重新渲染。
+```tsx
+  // 创建 context
+  const ThemeContext = React.createContext('light');
+  const SizeContext = React.createContext('middle');
+
+  // 提供 context 值
+  <ThemeContext.Provider value={'dark'}>
+    <SizeContext.Provider value={'small'}>
+      <App/>
+    </SizeContext.Provider>
+  </ThemeContext.Provider>
+
+  // 使用 context 值
+  const theme = useContext(ThemeContext)
+```
+### useReducer
+useState 的替代方案，state 逻辑较复杂且包含多个子值，或者下一个 state 依赖于之前的 state 时适用。
+接收一个形如 (state, action) => newState 的 reducer，并返回当前的 state 以及与其配套的 dispatch 方法。
+使用 useReducer 还能给那些会触发深更新的组件做性能优化，因为你可以向子组件传递 dispatch 而不是回调函数。
+```tsx
+// 可以选择惰性地创建初始 state。为此，需要将 init 函数作为 useReducer 的第三个参数传入，这样初始 state 将被设置为 init(initialArg)。
+function init(initialCount) {
+  return {count: initialCount};
+}
+const [state, dispatch] = useReducer(reducer, initialArg, init);
+```
+计数器案例：
+```tsx
+const initialState = {count: 0};
+function reducer(state, action) {
+  switch (action.type) {
+    case 'increment':
+      return {count: state.count + 1};
+    case 'decrement':
+      return {count: state.count - 1};
+    default:
+      throw new Error();
+  }
+}
+
+function Counter() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return (
+    <>
+      Count: {state.count}
+      <button onClick={() => dispatch({type: 'decrement'})}>-</button>
+      <button onClick={() => dispatch({type: 'increment'})}>+</button>
+    </>
+  );
+}
+```
+### useMemo
+对返回值进行优化
+useMemo返回的是一个 memoized（记忆的） 值，在依赖不变的情况下，多次定义的时候，返回的值是相同的。
+进行大量的计算操作，是否有必须要每次渲染时都重新计算；
+对子组件传递相同内容的对象时，使用useMemo进行性能的优化
+```tsx
+const memoizedValue = useMemo(
+  () => {
+    computeValue(a, b);
+  },
+  [a, b],
+);
+
+```
+### useCallback
+目的:进行性能的优化
+
+把内联回调函数及依赖项数组作为参数传入 useCallback，它将返回该回调函数的 memoized 版本，该回调函数仅在某个依赖项改变时才会更新。
+
+useCallback 用于普通函数**在函数定义方面没有起到优化作用**，虽然记忆内联的回调函数进行函数的重复使用（函数执行完毕时，内部的普通函数会被销毁，函数组件重新渲染时，内部函数重新定义。这里对回调函数进行记忆重复使用最开始定义的回调函数），但是每次组件重新渲染时仍会重新定义useCallback的声明函数。**使用不当会有数据问题，陷入闭包陷阱**。因为每次使用的是最初定义函数时传入的初始值，而不是函数执行后被修改的值。
+
+因此通常使用useCallback的目的是**不希望子组件进行多次渲染**，并不是为了函数进行缓存。
+只有当你把回调函数传递给经过优化的并使用引用相等性去避免非必要渲染（例如 shouldComponentUpdate）的子组件时，它将非常有用。
+useCallback(fn, deps) 相当于 useMemo(() => fn, deps)。
+
+```tsx
+const memoizedCallback = useCallback(
+  () => {
+    doSomething(a, b);
+  },
+  [a, b],
+);
+
+```
+如果用作函数缓存，为了避免闭包陷阱，可以设置依赖项为[],使内部回调函数不因数据变化重新创建，使用 useRef 获取函数中用到的数据更新后的值。
+
+```tsx
+const ref = useRef()
+const ref2 = useRef()
+ref.current = a;
+ref2.current = b;
+const memoizedCallback = useCallback(
+  () => {
+    doSomething(ref.current, ref2.current);
+  },
+  [],
+);
+
+```
+### useRef
+useRef 会在每次渲染时返回同一个 ref 对象.
+通过字面量创建对象，每次函数执行组件重新渲染时都会重新创建对象。使用useRef 创建对象，每次渲染时会返回同一个ref对象。
+useRef 返回一个可变的 ref 对象，其 .current 属性被初始化为传入的参数（initialValue）。返回的 ref 对象在组件的整个生命周期内持续存在。
+当 ref 对象内容发生变化时，useRef 并不会通知你。变更 .current 属性不会引发组件重新渲染。如果想要在 React 绑定或解绑 DOM 节点的 ref 时运行某些代码，则需要使用回调 ref (结合 useCallback 使用: [我该如何测量 DOM 节点](https://zh-hans.reactjs.org/docs/hooks-faq.html#how-can-i-measure-a-dom-node))来实现。
+```tsx
+function TextInputWithFocusButton() {
+  const inputEl = useRef(null);
+  const onButtonClick = () => {
+    // `current` 指向已挂载到 DOM 上的文本输入元素
+    inputEl.current.focus();
+  };
+  return (
+    <>
+      <input ref={inputEl} type="text" />
+      <button onClick={onButtonClick}>Focus the input</button>
+    </>
+  );
+}
+```
+
+
+```tsx
+const refContainer = useRef(initialValue);
+```
+
+useRef 返回一个可变的 ref 对象，其 .current 属性被初始化为传入的参数（initialValue）。返回的 ref 对象在组件的整个生命周期内持续存在。
+
+
+### useImperativeHandle
+
+
+```tsx
+useImperativeHandle(ref, createHandle, [deps])
+```
+在使用 ref 时自定义暴露给父组件的实例值。在大多数情况下，应当避免使用 ref 这样的命令式代码。useImperativeHandle 应当与 forwardRef 一起使用：
+
+```tsx
+function FancyInput(props, ref) {
+  const inputRef = useRef();
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      inputRef.current.focus();
+    }
+  }));
+  return <input ref={inputRef} ... />;
+}
+FancyInput = forwardRef(FancyInput);
+```
+在本例中，渲染 <FancyInput ref={inputRef} /> 的父组件可以调用 inputRef.current.focus()。
+
+### useLayoutEffect
+
+其函数签名与 useEffect 相同，但它会在所有的 DOM 变更之后同步调用 effect。可以使用它来读取 DOM 布局并同步触发重渲染。在浏览器执行绘制之前，useLayoutEffect 内部的更新计划将被同步刷新。
+尽可能使用标准的 useEffect 以避免阻塞视觉更新。
+
+useEffect会在渲染的内容更新到DOM上后执行，不会阻塞DOM的更新；
+useLayoutEffect会在渲染的内容更新到DOM上之前执行，会阻塞DOM的更新；
+
+需要注意 useLayoutEffect 与 componentDidMount、componentDidUpdate 的调用阶段是一样的。但是，官方推荐一开始先用 useEffect，只有当它出问题的时候再尝试使用 useLayoutEffect。
+
+
+### useDebugValue
+### useDeferredValue
+### useTransition
+### useId
+
+## 性能优化
+### pureComponent
+### memo
 
 
 ## redux
@@ -786,8 +976,8 @@ reducer是一个纯函数，reducer做的事情就是将传入的state和action�
 ### redux-devtool
 ### reducer的模块拆分
 reducer 必须是一个纯函数
-### redux-to-kit
-
+### @reduxjs/toolkit
+官方推荐编写redux的方式
 ### 纯函数
 
 

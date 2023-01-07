@@ -28,6 +28,7 @@ function test(){
 test()
 const root = ReactDOM.createRoot(document.getElementById('root')  as HTMLElement);
 root.render(
+  // 使用严格模式 组件创建会执行两次
   <React.StrictMode>
         {/* <ConfigProvider
       theme={{
