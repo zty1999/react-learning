@@ -6,8 +6,8 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, createBrowserRouter, Routes, Route, RouterProvider } from 'react-router-dom';
 
 // redux
-// import { Provider } from "react-redux"
-// import {store} from 'src/redux';
+// import { Provider } from "react-redux"   
+import {store} from '@rentHouse/redux';  
 
 import './index.css';
 // 导入字体图标库的样式文件
@@ -24,6 +24,8 @@ import './assets/fonts/iconfont.css'
 
 function test(){
   console.log('enabled rentHouse');
+  console.log(store);
+  
 }
 test()
 const root = ReactDOM.createRoot(document.getElementById('root')  as HTMLElement);

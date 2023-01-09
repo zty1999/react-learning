@@ -15,18 +15,21 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "allowUmdGlobalAccess": true, // 允许在模块中全局变量的方式访问umd模块
-    "noImplicitAny": false, // 关闭默认any类型检查
+    // "allowUmdGlobalAccess": true, // 允许在模块中全局变量的方式访问umd模块
+    "noImplicitAny": false, // 关闭默认any类型检查 是否在表达式和声明上有隐含的any类型时报错
     "types": ["node"],
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
-      "@/": ["src/"],
-      "@app:*/": ["src/apps/*/"],
-      "@rentHouse/*": ["src/apps/rentHouse/*"],
+      "@/*": ["src/*"],
+      "~/*": ["src/apps/*/src"],
+      "@airbnb/*": ["src/apps/airbnb/src/*"],
+      "@rentHouse/*": ["src/apps/rentHouse/src/*"],
+      "@pages/*": ["src/pages/*"],
       "@redux/*": ["src/redux/*"],
       "@routes/*": ["src/routes/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules", "config/**/*.js", "**/*.spec.ts"]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx",],
+  "exclude": ["node_modules"],
+  // "references": [{ "path": "./tsconfig.node.json" }],
 }

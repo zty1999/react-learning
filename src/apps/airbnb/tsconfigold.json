@@ -1,0 +1,23 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "build",
+    "rootDir": "src",
+    "allowJs": false,
+    "baseUrl": "./",
+    "paths": {
+      "@/": ["src/"],
+      "@pages/*": ["src/pages/*"],
+      "pages/*": ["src/pages/*"],
+    }
+  },
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/*.spec.js",
+    "**/*.stories.ts",
+    "**/*.stories.tsx",
+    "**/*.stories.js"
+  ],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx"]
+}

@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs";
-// import CracoLessPlugin from "craco-less";
+import CracoLessPlugin from "craco-less";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import InlineChunkHtmlPlugin from "react-dev-utils/InlineChunkHtmlPlugin";
 
@@ -21,10 +21,10 @@ function configureWebpack(webpackConfig, { env, paths }) {
   const isEnvProduction = env === 'production';
   //配置HtmlWebpackPlugin用来产生一个独立的HTML
   function mkHtmlWebpackPlugin(chunks, filename, template) {
-    console.log('paths', paths);
-    console.log('template', template);
-    console.log('filename', filename);
-    console.log('favicon', path.join(paths.appPublic, "favicon.ico"));
+    // console.log('paths', paths);
+    // console.log('template', template);
+    // console.log('filename', filename);
+    // console.log('favicon', path.join(paths.appPublic, "favicon.ico"));
 
     return new HtmlWebpackPlugin({
       inject: true,
@@ -61,19 +61,19 @@ function configureWebpack(webpackConfig, { env, paths }) {
     const filePath = path.join(appsDir, fileName);
     const file = fs.statSync(filePath);
     if (file.isDirectory()) {
-      apps[fileName] = fs.existsSync(path.join(filePath, "index.tsx"))? path.join(filePath, "index.tsx"):path.join(filePath, "index.js");
+      apps[fileName] = fs.existsSync(path.join(filePath,'src', "index.tsx"))? path.join(filePath,'src', "index.tsx"):path.join(filePath,'src', "index.js");
       let template: string | undefined = path.join(paths.appPublic, fileName + ".html");
       let indextempl: string | undefined = path.join(paths.appPublic,"index.html");
       if (!fs.existsSync(template)){// public文件夹中没有子项目对应html文件 则根据 index.html 生成
         // template = undefined;
         let templateContent = fs.readFileSync(indextempl);
-        console.log('templateContent',templateContent);
+        // console.log('templateContent',templateContent);
         fs.writeFileSync(template,templateContent)
       } 
       htmlWebpackPlugins.push(mkHtmlWebpackPlugin([fileName] as never[], fileName, template));
     }
   });
-  console.log('htmlWebpackPlugins', htmlWebpackPlugins);
+  // console.log('htmlWebpackPlugins', htmlWebpackPlugins);
 
 
   //main为create-react-app默认创建的入口，保留下来。这样既可以实现原始的单入口，又可以实现多入口
@@ -81,12 +81,12 @@ function configureWebpack(webpackConfig, { env, paths }) {
     main: webpackConfig.entry,
     ...apps
   };
-  console.log('entry', webpackConfig.entry);
+  // console.log('entry', webpackConfig.entry);
 
   //覆盖默认的plugins配置
   const defaultHtmlWebpackPluginIndex = webpackConfig.plugins.findIndex(plugin => plugin instanceof HtmlWebpackPlugin);
   webpackConfig.plugins.splice(defaultHtmlWebpackPluginIndex, 1, mkHtmlWebpackPlugin(["main"] as never[], "index", undefined),...htmlWebpackPlugins);
-  console.log(...htmlWebpackPlugins);
+  // console.log(...htmlWebpackPlugins);
 
 
   //create-react-app默认用的是一个固定文件名，不适合多入口！改为按入口名生成输出文件名
@@ -105,31 +105,34 @@ function configureWebpack(webpackConfig, { env, paths }) {
   const inlineChunkHtmlPluginIndex = webpackConfig.plugins.findIndex(plugin => plugin instanceof InlineChunkHtmlPlugin);
   if (inlineChunkHtmlPluginIndex >= 0)
     webpackConfig.plugins.slice(inlineChunkHtmlPluginIndex, 1);
-  console.log('plugins', webpackConfig.plugins);
+  // console.log('plugins', webpackConfig.plugins);
 
   return webpackConfig;
 }
 
 
 const cracoConfig = {
-  // plugins: [
-  //   {
-  //     plugin: CracoLessPlugin,
-  //     options: {
-  //       lessloaderOptions: {
-  //         lessOptions: {
-  //           modifyVars: { "@primary-color": "#1da57a" },
-  //           javascriptEnabled: true,
-  //         },
-  //       },
-  //     },
-  //   },
-  // ],
+  plugins: [
+    {
+      plugin: CracoLessPlugin,
+      options: {
+        lessloaderOptions: {
+          lessOptions: {
+            modifyVars: { "@primary-color": "#1da57a" },
+            javascriptEnabled: true,
+          },
+        },
+      },
+    },
+
+  ],
   // webpack
   devServer: configureDevServer,
   webpack: {
     alias: {
       "@": resolve("src"),
+      "@airbnb": resolve("src/apps/airbnb/src"),
+      "@rentHouse": resolve("src/apps/rentHouse/src"),
       components: resolve("src/components"),
       utils: resolve("src/utils"),
       // '@mui/styled-engine': '@mui/styled-engine-sc'

@@ -1,21 +1,24 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import { useRoutes } from "react-router-dom";
 import { routes } from "./routes";
-import { SizeContext, ThemeContext } from "./context";
+import { shallowEqual, useSelector } from "react-redux";
+import { useLogLife } from "./hooks";
 
 
 
 function App() {
+  useLogLife({name:'app'})
+  const { menus } = useSelector((state:any)=>{
+    return {
+      menus: state.menu.menus
+    }
+  },shallowEqual)
+
   return (
     <div className="App">
-      <ThemeContext.Provider value={"dark"}>
-        <SizeContext.Provider value={"small"}>
+      {menus}
         {useRoutes(routes)}
-        </SizeContext.Provider>
-      </ThemeContext.Provider>
-      
     </div>
   );
 }

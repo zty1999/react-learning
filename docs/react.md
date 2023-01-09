@@ -3,9 +3,6 @@ react
 只关注视图的js库
 
 
-
-
-
 发送请求获取数据
 
 处理数据
@@ -760,10 +757,159 @@ console.log(this.textRef.current.value);
 
 ### render-props 和高阶组件
 
+
+#### 高阶组件
+##### memo
+
+memo 高阶组件包裹起来的组件有对应的特点：只有props发生改变时，才会重新渲染
+
+
+
+
+### 动态加载组件：
+示例：
+```jsx
+import React, { Suspense } from 'react';
+import OtherComponent from './OtherComponent';
+
+React.lazy 函数 像渲染常规组件一样处理动态引入（的组件）
+const OtherComponent = React.lazy(() => import('./OtherComponent'));
+
+
+Suspense 组件中渲染 lazy 组件，可以在等待加载 lazy 组件时做优雅降级（如 loading 指示器等）
+function MyComponent() {
+  return (
+    <div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <OtherComponent />
+      </Suspense>
+    </div>
+  );
+}
+```
+
+### 组件切换
+
+React.startTransition 进行组件切换过渡展示，当组件未准备好渲染内容时，展示旧的ui，优化用户体验。
+
+```jsx
+function handleTabSelect(tab) {
+  startTransition(() => {
+    setTab(tab);
+  });
+}
+```
+
+
+### 异常捕获
+
+模块加载失败（如网络问题）会触发一个错误。可以通过异常捕获便捷技术处理，以显示良好的用户体验并管理恢复事宜。
+```jsx
+import React, { Suspense } from 'react';
+import MyErrorBoundary from './MyErrorBoundary';
+
+const OtherComponent = React.lazy(() => import('./OtherComponent'));
+const AnotherComponent = React.lazy(() => import('./AnotherComponent'));
+
+const MyComponent = () => (
+  <div>
+    <MyErrorBoundary>
+      <Suspense fallback={<div>Loading...</div>}>
+        <section>
+          <OtherComponent />
+          <AnotherComponent />
+        </section>
+      </Suspense>
+    </MyErrorBoundary>
+  </div>
+);
+```
+
 ### 组件性能优化
 
 
-## react 路由
+
+## react-router 路由
+### 路由基础（BrowserRouter Routes Route）
+#### BrowserRouter 用于包裹需要路由的组件，通常在应用的最外层使用。
+
+**HashRouter 作用与`BrowserRouter`一样，但`HashRouter`修改的是地址栏的hash值。**
+
+#### Route
+Route 用于定义一个访问路径与 react 组件之间的关系。`path => 路径`  `element => 组件`
+- `caseSensitive` 属性用于指定：匹配时是否区分大小写（默认为 false）
+#### Routes
+Routes 用于包裹一系列Route，决定访问路径对应加载的react组件。 当url发生变化时，Routes 会查看其所有子元素找到对应组件并呈现
+
+```jsx
+function App() {
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route path="/main" element={<Home />}  />
+          <Route path="citylist" element={<CityList />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  );
+}
+```
+
+
+#### 404页面
+通配符匹配所有不存在的路径
+```jsx
+<Route path="*" element={<NotFound />} />
+```
+#### 嵌套路由
+配置嵌套路由，父级路由需 添加 `/*` 才会继续对子路由进行深度匹配。
+```jsx
+function App() {
+  return (
+    <Router>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          {/* 父级路由 */}
+          <Route path="/main/*" element={<Home />}  >
+          </Route>
+        </Routes>
+      </Suspense>
+    </Router>
+  );
+}
+
+{/* 子级路由 */}
+  return (
+    <div className="home">
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/news" element={<News />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+    </div>
+  );
+```
+### 路由跳转及传参
+#### Link
+作用: 修改URL，且不发送网络请求（路由链接）。
+
+```jsx
+<Link to="/path">点击跳转路由</Link>
+```
+#### NavLink
+作用: 与 `Link` 组件类似，可实现导航的“高亮”效果。
+
+
+#### useNavigate
+hooks:useNavigate  hooks 只能在 function 组件中使用。
+
+```jsx
+import { useNavigate } from "react-router-dom";
+const navigate = useNavigate();
+navigate('/path');
+```
+### 路由鉴权
 
 
 ## react hooks
@@ -917,8 +1063,6 @@ useRef 返回一个可变的 ref 对象，其 .current 属性被初始化为传�
 
 
 ### useImperativeHandle
-
-
 ```tsx
 useImperativeHandle(ref, createHandle, [deps])
 ```
@@ -950,14 +1094,84 @@ useLayoutEffect会在渲染的内容更新到DOM上之前执行，会阻塞DOM�
 
 
 ### useDebugValue
-### useDeferredValue
-### useTransition
+### useDeferredValue 延迟更新 **性能优化**
+```ts
+const deferredValue = useDeferredValue(value);
+```
+useDeferredValue 接受一个值，并返回该值的新副本，该副本将推迟到更紧急地更新之后。如果当前渲染是一个紧急更新的结果，比如用户输入，React 将返回之前的值，然后在紧急渲染完成后渲染新的值。
+
+该 hook 与使用防抖和节流去延迟更新的用户空间 hooks 类似。使用 useDeferredValue 的好处是，React 将在其他工作完成（而不是等待任意时间）后立即进行更新，并且像 [startTransition](#useTransition) 一样，延迟值可以暂停，而不会触发现有内容的意外降级。
+
+useDeferredValue 仅延迟你传递给它的值。如果你想要在紧急更新期间防止子组件重新渲染，则还必须使用 React.memo 或 React.useMemo 记忆该子组件：
+
+
+```tsx
+function Typeahead() {
+  const query = useSearchQuery('');
+  const deferredQuery = useDeferredValue(query);
+
+  // Memoizing 告诉 React 仅当 deferredQuery 改变，
+  // 而不是 query 改变的时候才重新渲染
+  const suggestions = useMemo(() =>
+    <SearchSuggestions query={deferredQuery} />,
+    [deferredQuery]
+  );
+
+  return (
+    <>
+      <SearchInput query={query} />
+      <Suspense fallback="Loading results...">
+        {suggestions}
+      </Suspense>
+    </>
+  );
+}
+```
+记忆该子组件告诉 React 它仅当 deferredQuery 改变而不是 query 改变的时候才需要去重新渲染。这个限制不是 useDeferredValue 独有的，它和使用防抖或节流的 hooks 使用的相同模式。
+
+
+### useTransition 延迟更新 **性能优化**
+```tsx
+const [isPending, startTransition] = useTransition();
+```
+
+返回一个状态值表示过渡任务的等待状态，以及一个启动该过渡任务的函数。
+useTransition 告诉react对于某部分任务的更新优先级较低，可以稍后进行更新。
+
+由于react更新视图是统一更新，会出现如果页面加载数据较多时，整体视图加载会滞后，使用 useTransition 可以延后渲染不需要立即更新的视图，在需要即时更新的视图更新完后再渲染。
+如列表搜索，由于有过长的列表需要渲染会阻碍搜索项输入变化的即时渲染。input框的输入变化应该是即时渲染，列表渲染可以loading渲染，此时可以对 列表渲染使用 useTransition 
+
+```tsx
+function App() {
+  const [isPending, startTransition] = useTransition();
+  const [count, setCount] = useState(0);
+  
+  function handleClick() {
+    // startTransition 允许你通过标记更新将提供的回调函数作为一个过渡任务：
+    startTransition(() => {
+      setCount(c => c + 1);
+    })
+  }
+
+  return (
+    <div>
+      {/* isPending 指示过渡任务何时活跃以显示一个等待状态： */}
+      {isPending && <Spinner />}
+      <button onClick={handleClick}>{count}</button>
+    </div>
+  );
+}
+```
+
+
+
+
 ### useId
+useId 是一个用于生成横跨服务端和客户端的稳定的唯一 ID 的同时避免 [hydration](#hydration)  不匹配的 hook。
 
-## 性能优化
-### pureComponent
-### memo
-
+useId是用于react的同构应用开发的，前端的SPA页面并不需要使用它；
+- useId可以保证应用程序在客户端和服务器端生成唯一的ID，这样可以有效的避免通过一些手段生成的id不一致，造成
+hydration mismatch；
 
 ## redux
 帮助管理State，提供了可预测的管理
@@ -970,14 +1184,93 @@ content定义更新内容
 **Reducer 纯函数 结合state和action**
 reducer是一个纯函数，reducer做的事情就是将传入的state和action结合起来生成一个新的state
 ### 基本使用
+#### redux-thunk
+action 只能返回普通对象，redux中使用redux-thunk 进行配置，使action能返回函数:
+```ts
+// 正常情况下 store.dispatch(action) return object,  redux-thunk  使 dispatch 派发的action可以返回函数
+export const store = createStore(reducer, composeEnhacers(applyMiddleware(thunk)))
+```
+### react 结合 redux：react-redux
+#### connect 高阶函数结合返回的高阶组件
+redux开发中，为了让组件和redux结合起来 需要使用 react-redux 中的connect，需要编写mapStateToProps和 mapDispatchToProps映射的函数：
+```tsx
+import { connect } from "react-redux";
+import { nameAction } from "./redux/modules/user/action";
+// props 中读取传入的state和action
+function App(props) {
+  const { name, changeName } = props;
+}
+const mapStateToProps = (state) => ({
+  name: state.name,
+});
+const mapDispatchToProps = (dispatch) => ({
+  changeName: () => {
+    dispatch(nameAction);
+  },
+});
+// connect(要映射到app组件中的数据,组件中可派发的action函数)(组件)
+export default connect(mapStateToProps, mapDispatchToProps)(App);
 
-### react 结合 redux
+```
+#### useSelector useDispatch 简化组件中使用redux的步骤
+在Redux7.1开始，提供了Hook的方式，我们再也不需要编写connect以及对应的映射函数了
+使用 useSelector 将 redux 中 store 的数据映射到组件内
+使用 useDispatch 直接派发action
+```tsx
+  import { useSelector, useDispatch } from "react-redux";
+  import { nameAction } from "./redux/modules/user/action";
+  function App(props) {
+    const { auth } = useSelector((state:any)=>{
+      return {
+        auth: state.auth.auth
+      }
+    })
+    const dispatch = useDispatch()
+    dispatch(nameAction);
+  }
+  export default App;
+
+```
+#### useSelector 的浅层比较 **性能优化**
+
+ 
+useSelector 默认监听整个 state，会比较我们返回的两个对象是否相等 `const refEquality = (a, b) => a === b`。
+当 useSelector 接收到一个新的引用时，它会**强制重新渲染组件，即使组件的 props 没有改变（memo组件的作用失效）**。
+必须返回两个完全相等的对象才可以不引起重新渲染。
+直接使用 useSelector useDispatch  修改state，会造成当前使用到state的组件都进行重新渲染（React 会默认递归地重新渲染所有子组件，即当父组件使用了state 时，所有子组件都会被重新渲染，即使大部分组件实际上没有变化）
+解决方案：
+1. **shallowEqual** 使用 useSelector 时第二个参数传递一个比较函数，接收旧值和新值作为参数，内部会判断两个值是否相同，相同则返回 “true”，那么组件也就不会被重新渲染。
+react-redux 提供了比较函数 shallowEqual 可以使用它来检查数组 内部每一项 是否仍然相同
+```tsx
+const { auth } = useSelector((state:any)=>{
+      return {
+        auth: state.auth.auth
+      }
+    },shallowEqual)
+```
+1. **createSelector** 使用 createSelector 来记忆（Memoize） Selectors
+该方法需要安装 reselect，对 useSelector 传入的函数使用 createSelector 进行包装。
+createSelector 接收一个或多个 input selector 函数作为参数，外加一个 output selector，并返回新的 selector 函数 输出的结果将被缓存供下次使用。
+具体参考官方文档：https://cn.redux.js.org/tutorials/fundamentals/part-7-standard-patterns/
+
+
+**tips**
+在组件中使用多个 Selectors 时每个selectors 都需要使用 对 useSelector 进行 浅层比较处理，如果只有当前使用被修改数据的组件进行了state数据浅层比较处理,其它监听数据未修改的组件没有进行浅层比较处理，监听数据未修改的组件也会进行重新渲染。
 ### redux的异步操作
 ### redux-devtool
+该chrome插件 react项目默认关闭，开启需在redux中配置:
+```ts
+// 开启 redux-devtools
+const composeEnhacers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({ trace: true }) || compose;
+
+```
+
 ### reducer的模块拆分
 reducer 必须是一个纯函数
 ### @reduxjs/toolkit
 官方推荐编写redux的方式
+
+
 ### 纯函数
 
 
@@ -987,6 +1280,169 @@ reducer 必须是一个纯函数
 
 
 
+
+
+
+
+
+
+
+## 性能优化
+
+### pureComponent
+### memo useMemo
+### useSelector
+### 长列表性能优化
+
+**场景**:展示大型列表和表格数据（比如：城市列表、通讯录、微博等），会导致页面卡顿、滚动不流畅等性能问题。
+
+**产生性能问题的原因**:大量 DOM 节点的重绘和重排（节点在页面滚动中会进行重绘和重排，才会显示在视图中）
+
+**其他原因**: 设备老旧
+
+**其他问题**: 移动设备耗电加快、影响移动设备电池寿命
+
+两种优化方式：懒渲染 & 可视区域渲染
+#### 懒渲染（懒加载）
+常见的长列表优化方案，常见于移动端
+原理：每次只渲染一部分（比如10条数据），等渲染的数据即将滚动完时，再渲染下面部分。
+
+**缺点**
+数据量大时，页面中依然存在大量 DOM 节点，占用内存过多，降低浏览器渲染性能，导致页面卡顿。
+
+**使用场景**
+数据量不大的情况（比如 1000 条，具体还要看每条数据的复杂程度）
+
+#### 可视区域渲染
+react-virtualized
+
+**原理**
+只渲染页面可视区域的列表项，非可视区域的数据“完全不渲染”，在滚动列表时动态更新列表项。
+
+![1665542579944](image/cookbook/1665542579944.png)
+
+在非可视区域，会预加载部分数据，避免快速滚动时，页面白屏问题。
+![1665542691766](image/cookbook/1665542691766.png)
+
+
+**使用场景**
+一次性展示大量数据的情况（比如：大表格、微博、聊天应用等）
+
+
+
+
+## SSR-SPA
+node + react + nextjs
+SSR（Server Side Rendering，服务端渲染），指的是页面在服务器端已经生成了完成的HTML页面结构，不需要浏览器通过执行js代码，创建页面结构；
+对应的是CSR（Client Side Rendering，客户端渲染），我们开发的SPA页面通常依赖的就是客户端渲染；
+
+单页面富应用两个问题：
+- 首屏渲染速度
+- SEO优化：搜索引擎优化
+
+SPA：
+- 下载index.html
+- 下载js文件，并且执行js文件
+
+SSR:
+借助 Node 完成 下载并执行js文件的功能 => Vue/React SSR API => nuxt/next.js
+![服务器渲染](./image/cookbook/2023-01-08-14-05-06.png)
+
+
+### SSR 同构应用
+**什么是同构？**
+一套代码既可以在服务端运行又可以在客户端运行，这就是同构应用。
+- 同构是一种SSR的形态，是现代SSR的一种表现形式。
+- 当用户发出请求时，先在服务器通过SSR渲染出首页的内容。
+- 但是对应的代码同样可以在客户端被执行。
+- 执行的目的包括事件绑定等以及其他页面切换时也可以在客户端被渲染；
+#### Hydration
+在进行 SSR 时，我们的页面会呈现为 HTML。
+- 但仅 HTML 不足以使页面具有交互性。例如，浏览器端 JavaScript 为零的页面不能是交互式的（没有 JavaScript 事件处理程序来响应用
+户操作，例如单击按钮）。
+- 为了使我们的页面具有交互性，除了在 Node.js 中将页面呈现为 HTML 之外，我们的 UI 框架（Vue/React/...）还在浏览器中加载和呈现
+页面。（它创建页面的内部表示，然后将内部表示映射到我们在 Node.js 中呈现的 HTML 的 DOM 元素。）
+这个过程称为hydration。
+
+
+
+
+
+
+
+
+
+
+
+## 实践积累
+### 自定义高阶组件
+
+#### withRoute => 在class组件中使用hook: useNavigate
+
+### 自定义hook
+
+#### 统一提供context
+useGlobalContext
+#### 数据存储封装
+#### 页面滚动监听
+### redux 项目开发体验优化
+
+#### action 拦截 进行日志打印
+
+
+
+
+
+
+
+## 项目开发
+学习React开发的模式和编程的思想
+React开发的流程、模式、项目架构，项目中会有很多组件、工具等封装、抽取、复用思想；
+
+### 项目规范：开发规范和代码风格
+- 1. 文件夹、文件名称统一小写、多个单词以连接符（-）连接；
+- 2. JavaScript变量名称采用小驼峰标识，常量全部使用大写字母，组件采用大驼峰；
+- 3. CSS采用普通CSS和styled-component结合来编写（全局采用普通CSS、局部采用styled-component）;
+- 4. 整个项目不再使用class组件，统一使用函数式组件，并且全面拥抱Hooks；
+- 5. 所有的函数式组件，为了避免不必要的渲染，全部使用memo进行包裹；
+- 6. 组件内部的状态，使用useState、useReducer；业务数据全部放在redux中管理；
+- 7. 函数组件内部基本按照如下顺序编写代码：
+  - 组件内部state管理；
+  - redux的hooks代码；
+  - 其他hooks相关代码（比如自定义hooks）；
+  - 其他逻辑代码；
+  - 返回JSX代码；
+- 8. redux代码规范如下：
+  - redux目前我们学习了两种模式，在项目实战中尽量两个都用起来，都需要掌握；
+  - 每个模块有自己独立的reducer或者slice，之后合并在一起；
+  - redux中会存在共享的状态、从服务器获取到的数据状态；
+- 9. 网络请求采用axios
+  - 对axios进行二次封装；
+  - 所有的模块请求会放到一个请求文件中单独管理；
+  - 10.项目使用AntDesign、MUI（Material UI）
+  - 爱彼迎本身的设计风格更多偏向于Material UI，但是课程中也会尽量讲到AntDesign的使用方法；
+  - 项目中某些AntDesign、MUI中的组件会被拿过来使用；
+  - 但是多部分组件还是自己进行编写、封装、实现；
+  - 其他规范在项目中根据实际情况决定和编写；
+
+### 项目搭建
+#### 项目配置
+icon、标题、tsconfig.json:代码提示、配置别名
+#### webpack配置
+- react 默认隐藏了webpack配置文件入口:
+  - 使用 npm run eject 暴露配置文件,操作不可逆
+  - 使用 craco 进行 webpack 相关配置。
+- react 没有内置less支持，使用 craro craco-less 支持 less 使用
+#### 项目目录结构划分
+#### css样式的重置
+- normalize.css
+- reset.css
+#### router 配置
+- React.lazy 懒加载组件
+#### redux 状态管理
+- 普通方式
+- @reduxjs/toolkit方式：推荐方式，未来趋势
+#### 网络请求：axios
 
 
 ## 其他
