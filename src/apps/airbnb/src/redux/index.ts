@@ -2,11 +2,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./modules/auth";
 import menuReducer from "./modules/menu";
+import homeReducer from "./modules/home";
 
 const store = configureStore({
     reducer: {
         auth:authReducer,
-        menu:menuReducer
+        menu:menuReducer,
+        home:homeReducer
     }
 })
 

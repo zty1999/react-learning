@@ -2,11 +2,9 @@ import React from "react"
 import { Navigate } from "react-router-dom";
 
 
-const Home = React.lazy(() => import("src/apps/airbnb/src/pages/home"));
-const House = React.lazy(() => import("../pages/house"));
-// const Home = React.lazy(() => import("@airbnb/pages/home"));
-// const House = React.lazy(() => import("@airbnb/pages/house"));
-console.log((window as any)); 
+const Home = React.lazy(() => import("@airbnb/pages/home"));
+const Entire = React.lazy(() => import("@airbnb/pages/entire"));
+const House = React.lazy(() => import("@airbnb/pages/house"));
 
 
 export const routes = [
@@ -17,6 +15,10 @@ export const routes = [
   {
     path: "/home",
     element: <Home />,
+  },
+  {
+    path: "/entire",
+    element: <Entire />,
   },
   {
     path: "/house",

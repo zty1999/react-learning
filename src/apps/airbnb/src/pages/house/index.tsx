@@ -26,7 +26,7 @@ import hyRequest from "@airbnb/services";
 
     const dispatch = useDispatch()
 
-    useLogLife({name:'home'})
+    useLogLife({name:'house'})
     const position = useScrollPosition()
     console.log(position);
     

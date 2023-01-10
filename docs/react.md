@@ -339,6 +339,26 @@ const ChildComponent = (props) => {
 }
 ```
 
+**slot 组件插槽 组件自定义**
+对组件部分内容进行自定义渲染，除了通过将渲染内容使用 ref 绑定后从 props 传递，也可直接通过 props.children 获取组件的开始标签和结束标签之间的内容进行渲染
+
+```tsx
+const contentRef = React.createRef();
+<Wrapper content={contentRef}>
+  <Content ref={contentRef}></Content>
+</Wrapper>
+
+
+// Wrapper.tsx
+<div className='content' >
+  {props.content}
+</div>
+// or
+<div className='content' >
+  {props.children}
+</div>
+```
+
 
 **特点**
 - 可以给组件传递任意类型的数据 如函数，jsx
@@ -717,8 +737,7 @@ class MyComponent extends React.Component{
 #### 非受控组件 (DOM) 方式
 
 - 借助 ref ，使用 原生 DOM 方式来获取表单元素值
-- ref 的作用： 获取 DOM 或组件
-
+- ref 的作用： 获取 DOM 或组件,ref.current 直接指向 DOM 元素实例
 ```jsx
 // React.createRef() 方法创建一个 ref 对象
 constructor(){

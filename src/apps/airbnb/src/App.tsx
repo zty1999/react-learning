@@ -2,23 +2,20 @@ import React from "react";
 import "./App.css";
 import { useRoutes } from "react-router-dom";
 import { routes } from "./routes";
-import { shallowEqual, useSelector } from "react-redux";
 import { useLogLife } from "./hooks";
 
+import AppHeader from "@airbnb/components/app-header";  
+import AppFooter from "@airbnb/components/app-footer";  
 
 
 function App() {
   useLogLife({name:'app'})
-  const { menus } = useSelector((state:any)=>{
-    return {
-      menus: state.menu.menus
-    }
-  },shallowEqual)
 
   return (
     <div className="App">
-      {menus}
+      <AppHeader/>
         {useRoutes(routes)}
+      <AppFooter/>
     </div>
   );
 }

@@ -135,7 +135,7 @@ const cracoConfig = {
       "@rentHouse": resolve("src/apps/rentHouse/src"),
       components: resolve("src/components"),
       utils: resolve("src/utils"),
-      // '@mui/styled-engine': '@mui/styled-engine-sc'
+      '@mui/styled-engine': '@mui/styled-engine-sc'
     },
     configure: configureWebpack,
     // configure: {

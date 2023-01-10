@@ -1,12 +1,15 @@
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
+import "normalize.css";
+import 'antd/dist/reset.css';
 import "./assets/css/index.less";
-import App from "./App"; 
+import App from "./App";
 import { HashRouter } from "react-router-dom";
+import store from "./redux";
 import { SizeContext, ThemeContext } from "./context";
 import { Provider } from "react-redux";
-import store from "./redux";
-
+import { ThemeProvider } from "styled-components";
+import theme from '@airbnb/assets/theme'
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
@@ -19,14 +22,16 @@ root.render(
   // <React.StrictMode>
   <Suspense fallback={"loading"}>
     <HashRouter>
-    <ThemeContext.Provider value={"dark"}>
-      <SizeContext.Provider value={"small"}>
-        <Provider store={store}>
-          <App />
-        </Provider>
-      </SizeContext.Provider>
-    </ThemeContext.Provider>
-  </HashRouter>
+      <ThemeContext.Provider value={"dark"}>
+        <ThemeProvider theme={theme}>
+          <SizeContext.Provider value={"small"}>
+            <Provider store={store}>
+              <App />
+            </Provider>
+          </SizeContext.Provider>
+        </ThemeProvider>
+      </ThemeContext.Provider>
+    </HashRouter>
   </Suspense>
   // </React.StrictMode>
 );
