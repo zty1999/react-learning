@@ -20,7 +20,7 @@
     "noImplicitAny": false, // 关闭默认any类型检查 是否在表达式和声明上有隐含的any类型时报错
     "noImplicitThis": true,
     "strictNullChecks": true,
-    "types": ["node"],
+    "types": ["node","webpack-env"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],

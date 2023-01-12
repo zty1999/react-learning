@@ -19,3 +19,25 @@ webpack 配置中添加 alias 别名配置
 ```
 npm install @mui/material @emotion/react @emotion/styled @mui/styled-engine-sc styled-components
 ```
+## 组件路径动态引入报错
+相同路径 静态导入可以  动态导入报错 'src/apps/airbnb/src/demo/indicator'
+解决： 动态导入的路径 首尾使用静态字符 才能正确导入
+```ts
+const DEMOS = require['context']('../demo/',true,/\.tsx$/);
+const demoRoutes: any[] = [];
+DEMOS.keys().forEach((key) => {
+  // key => ./indicator/index.tsx
+  // DEMOS.resolve(key) => ./src/apps/airbnb/src/demo/indicator/index.tsx
+  let pathname = key.match(/\/.*?\/index\.tsx$/)[0];// => /${demoname}/index.tsx
+  pathname = pathname.replace(/\/index\.tsx$/,'')// => /${demoname}
+  let elementPath = DEMOS.resolve(key).replace(/\.\//,'').replace(/src\//,'').replace(/\/index\.tsx$/,'')
+  console.log('demo',pathname,elementPath);
+  // 首尾使用静态字符 否则引入失败
+  const Demo = React.lazy(() => import('src/' + elementPath + '/index'));
+  demoRoutes.push({
+    path: pathname,
+    element: <Demo />
+  })
+});
+
+```

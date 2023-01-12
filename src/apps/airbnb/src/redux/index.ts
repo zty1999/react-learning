@@ -3,13 +3,18 @@ import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./modules/auth";
 import menuReducer from "./modules/menu";
 import homeReducer from "./modules/home";
+import entireReducer from "./modules/entire/index";
+import detailReducer from "./modules/detail";
 
 const store = configureStore({
     reducer: {
         auth:authReducer,
         menu:menuReducer,
-        home:homeReducer
-    }
+        home:homeReducer,
+        entire:entireReducer,
+        detail:detailReducer,
+    },
+    // devTools: __DEV__,
 })
 
 // 对每次派发的 action 进行拦截，进行日志打印

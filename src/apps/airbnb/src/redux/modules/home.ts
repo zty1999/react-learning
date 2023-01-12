@@ -1,5 +1,5 @@
 import { getHomeDiscountData, getHomeGoodPriceData, getHomeHighScoreData, getHomeHotRecommendData, getHomeLongforData, getHomePlusData  } from '@airbnb/services'
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'  
 
 export const fetchHomeDataAction = createAsyncThunk("fetchdata", (payload, { dispatch ,getState}) => {  
   getHomeGoodPriceData().then(res => {

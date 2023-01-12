@@ -6,7 +6,7 @@ import "./assets/css/index.less";
 import App from "./App";
 import { HashRouter } from "react-router-dom";
 import store from "./redux";
-import { SizeContext, ThemeContext } from "./context";
+import { SizeContext } from "./context";
 import { Provider } from "react-redux";
 import { ThemeProvider } from "styled-components";
 import theme from '@airbnb/assets/theme'
@@ -22,15 +22,13 @@ root.render(
   // <React.StrictMode>
   <Suspense fallback={"loading"}>
     <HashRouter>
-      <ThemeContext.Provider value={"dark"}>
         <ThemeProvider theme={theme}>
           <SizeContext.Provider value={"small"}>
-            <Provider store={store}>
+            <Provider store={store as any}>
               <App />
             </Provider>
           </SizeContext.Provider>
         </ThemeProvider>
-      </ThemeContext.Provider>
     </HashRouter>
   </Suspense>
   // </React.StrictMode>

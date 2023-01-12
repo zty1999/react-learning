@@ -1,2 +1,6 @@
+import { any } from "prop-types"
 
-export  {}
+declare interface ImportMeta  {
+   globEager:any
+}
+export  type {ImportMeta}

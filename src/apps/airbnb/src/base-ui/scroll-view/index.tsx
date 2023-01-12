@@ -1,5 +1,5 @@
-import IconArrowLeft from '@airbnb/assets/svg/icon-arrow-left'
-import IconArrowRight from '@airbnb/assets/svg/icon-arrow-right'
+import IconArrowLeft from '@/apps/airbnb/src/assets/svg/icon-arrow-left'
+import IconArrowRight from '@/apps/airbnb/src/assets/svg/icon-arrow-right'
 import React, { memo, useEffect, useState } from 'react'
 import { useRef } from 'react'
 import { ViewWrapper } from './style'
