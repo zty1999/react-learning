@@ -5,9 +5,11 @@ import { useLogLife } from "@airbnb/hooks";
 import DetailPictures from "./components/detail-pictures";
 
 import {HouseWrapper} from "./style";
+import { changeHeaderConfigAction } from "@airbnb/redux/modules/main";
 
  const House = memo(
   () => {
+    useLogLife({name:'house'})
 
     const { detailInfo } = useSelector((state:any)=>{
       return {
@@ -16,7 +18,14 @@ import {HouseWrapper} from "./style";
     },shallowEqual)
 
 
-    useLogLife({name:'house'})
+
+    /** 派发异步的事件: 发送网络请求 */
+    const dispatch = useDispatch()
+    useEffect(() => {
+      dispatch(changeHeaderConfigAction({isFixed:false,isHome:false,topAlpha:false}) as any)
+    }, [dispatch])
+
+
     // const position = useScrollPosition()
     // console.log(position);
     // const theme = useContext(ThemeContext)
@@ -43,7 +52,6 @@ import {HouseWrapper} from "./style";
     //   },[]);
     return (
       <HouseWrapper>
-        <header>{detailInfo.name}</header>
         <DetailPictures/>
       </HouseWrapper>
     );

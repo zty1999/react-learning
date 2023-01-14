@@ -1,5 +1,5 @@
 import IconAvatar from '@airbnb/assets/svg/icon_avatar'
-import IconGlobal from '@airbnb/assets/svg/icon_global'
+import IconGlobal from '@/apps/airbnb/src/assets/svg/icon_global'
 import IconMenu from '@airbnb/assets/svg/icon_menu'
 import React, { memo, useEffect, useState } from 'react'
 import { RightWrapper } from './style'
@@ -30,7 +30,7 @@ const HeaderRight = memo(() => {
         <span className='btn'>登录</span>
         <span className='btn'>注册</span>
         <span className='btn'>
-          <IconGlobal/>
+          <IconGlobal width="16" height="16" />
         </span>
       </div>
 

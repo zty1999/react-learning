@@ -1,5 +1,6 @@
 
 import { configureStore } from "@reduxjs/toolkit";
+import mainReducer from "./modules/main";
 import authReducer from "./modules/auth";
 import menuReducer from "./modules/menu";
 import homeReducer from "./modules/home";
@@ -8,6 +9,7 @@ import detailReducer from "./modules/detail";
 
 const store = configureStore({
     reducer: {
+        main:mainReducer,
         auth:authReducer,
         menu:menuReducer,
         home:homeReducer,

@@ -2,7 +2,7 @@ import { memo } from "react";
 import Pagination from '@mui/material/Pagination';
 import { PaginationWrapper } from "./style";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { fetchEntireRoomListAction,changeIsLoadingAction } from "@/apps/airbnb/src/redux/modules/entire/actionCreators";
+import { fetchEntireRoomListAction } from "@airbnb/redux/modules/entire/actionCreators";
 
 
 const EntirePagination = memo(() => {

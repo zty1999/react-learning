@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 export const RoomsWrapper = styled.div`
   position:relative;
+  margin-top: 128px;
   padding: 40px 20px;
   .title {
     margin: 0 0 10px 10px;

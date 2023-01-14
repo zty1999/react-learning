@@ -6,7 +6,8 @@ import EntireFilter from "./components/entire-filter";
 import EntireRooms from "./components/entire-rooms";
 import EntirePagination from "./components/entire-pagination";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchEntireRoomListAction } from "../../redux/modules/entire/actionCreators";
+import { fetchEntireRoomListAction } from "@airbnb/redux/modules/entire/actionCreators";
+import { changeHeaderConfigAction } from "@airbnb/redux/modules/main";
 
 
 const Entire = memo(() => {
@@ -20,6 +21,8 @@ const Entire = memo(() => {
     /** 派发异步的事件: 发送网络请求 */
     const dispatch = useDispatch()
     useEffect(() =>{
+      console.log('entires 渲染');
+      dispatch(changeHeaderConfigAction({isFixed:true,isHome:false,topAlpha:false}) as any)
       dispatch(fetchEntireRoomListAction() as any)
     },[])
     

@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 
 export const DetailPicturesWrapper = styled.div`
+position: relative;
 > .pictures {
   display:flex;
   height: 600px;
@@ -58,8 +59,10 @@ export const DetailPicturesWrapper = styled.div`
     border: 1px solid #000;
   }
 }
-.show-btn {
+.show-pictures-btn {
   position: absolute;
+  bottom: 20px;
+  right: 20px;
   z-index: 99;
 }
 `

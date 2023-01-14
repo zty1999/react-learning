@@ -4,10 +4,11 @@ import { ItemWrapper } from './style'
 
 const LongforItem = memo((props:any) => {
   const { itemData } = props
-
   return (
     <ItemWrapper>
-      <div className='inner'>
+      {
+        itemData &&
+        <div className='inner'>
         <div className='item-info'>
           <img className='cover' src={itemData.picture_url} alt="" />
           <div className='bg-cover'></div>
@@ -17,6 +18,7 @@ const LongforItem = memo((props:any) => {
           </div>
         </div>
       </div>
+      }
     </ItemWrapper>
   )
 })

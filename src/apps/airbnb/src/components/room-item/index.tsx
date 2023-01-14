@@ -4,8 +4,8 @@ import { Rating } from "@mui/material";
 import { Carousel } from "antd";
 import Indicator from "@airbnb/base-ui/indicator";
 import { ItemWrapper, BottomExtra } from "./style";
-import IconArrowLeft from "../../assets/svg/icon-arrow-left";
-import IconArrowRight from "../../assets/svg/icon-arrow-right";
+import IconArrowLeft from "@airbnb/assets/svg/icon-arrow-left";
+import IconArrowRight from "@airbnb/assets/svg/icon-arrow-right";
 import classNames from "classnames";
 import { Navigate } from "react-router-dom";
 
@@ -13,8 +13,9 @@ const RoomItem = memo((props: any) => {
   const { itemData, itemWidth = "25%",itemClick } = props;
   const [selectIndex, setSelectIndex] = useState(0);
   const sliderRef = useRef()
-  const toggleClickHandle = (isNext = true, items) => {
+  const controlClickHandle = (isNext = true, event) => {
     let newIndex;
+    let picture_urls = itemData?.picture_urls
     if(isNext) {
       (sliderRef.current as any).next();
       newIndex = selectIndex + 1
@@ -22,13 +23,14 @@ const RoomItem = memo((props: any) => {
       (sliderRef.current as any).prev();
       newIndex = selectIndex - 1;
     }
-    if (newIndex < 0) newIndex = items.length - 1;
-    if (newIndex > items.length - 1) newIndex = 0;
+    if (newIndex < 0) newIndex = picture_urls.length - 1;
+    if (newIndex > picture_urls.length - 1) newIndex = 0;
     setSelectIndex(newIndex);
-    console.log(newIndex);
+
+    // 阻止事件冒泡
+    event.stopPropagation()
   };
   function itemClickHandle (){
-    console.log(itemData);
     if(itemClick)itemClick(itemData);
   }
   const pictureEl = (
@@ -41,13 +43,13 @@ const RoomItem = memo((props: any) => {
       <div className="control">
         <div
           className="btn left"
-          onClick={(e) => toggleClickHandle(false, itemData?.picture_urls)}
+          onClick={(e) => controlClickHandle(false, e)}
         >
           <IconArrowLeft width="16" height="16" />
         </div>
         <div
           className="btn right"
-          onClick={(e) => toggleClickHandle(true, itemData?.picture_urls)}
+          onClick={(e) => controlClickHandle(true, e)}
         >
           <IconArrowRight width="16" height="16" />
         </div>
@@ -56,7 +58,7 @@ const RoomItem = memo((props: any) => {
         <Indicator selectIndex={selectIndex}>
           {itemData?.picture_urls?.map((item, index) => {
             return (
-              <div className="dot-item" key={item}>
+              <div className="dot-item" key={item + new Date().getMilliseconds()}>
                 <span
                   className={classNames("dot", {
                     active: selectIndex === index,
@@ -69,7 +71,7 @@ const RoomItem = memo((props: any) => {
       </div>
       <Carousel dots={false} ref={sliderRef as any}>
         {itemData?.picture_urls?.map((item, index) => (
-          <div className="cover" key={item}>
+          <div className="cover" key={item + index + new Date().getMilliseconds()}>
             <img src={item} alt="" />
           </div>
         ))}

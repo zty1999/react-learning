@@ -6,8 +6,9 @@ export const IndicatorWrapper = styled.div`
   overflow:hidden;
 
   .i-content {
-    psition: relative;
+    position: relative;
     display: flex;
+    justify-content: center;
     transition: transform 200ms ease;
     >*{
       flex-shrink: 0;

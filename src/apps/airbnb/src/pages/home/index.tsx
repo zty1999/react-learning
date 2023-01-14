@@ -13,6 +13,7 @@ import HomeSectionV2 from "./components/home-section-v2";
 import HomeSectionV3 from "./components/home-section-v3";
 import HomeLongfor from "./components/home-longfor";
 import { useLogLife } from "../../hooks";
+import { changeHeaderConfigAction } from "../../redux/modules/main";
 const Home = memo(() => {
     /** 从redux中获取数据 */
     const { 
@@ -35,6 +36,7 @@ const Home = memo(() => {
     const dispatch = useDispatch()
     useEffect(() => {
       dispatch(fetchHomeDataAction() as any)
+      dispatch(changeHeaderConfigAction({isFixed:true,isHome:true,topAlpha:true}) as any)
     }, [dispatch])
     useLogLife({name:'home'})
 

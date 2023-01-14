@@ -29,12 +29,17 @@ const HomeSectionV2 = memo((props:any) => {
   }, [])
 
   return (
-    <SectionV2Wrapper>
-      <SectionHeader title={infoData.title} subtitle={infoData.subtitle}/>
-      <SectionTabs tabNames={tabNames} tabClick={tabClickHandle}/>
-      <SectionRooms roomList={infoData.dest_list?.[name]} itemWidth="33.33333%"/>
-      <SectionFooter name={name}/>
-    </SectionV2Wrapper>
+    <>
+    {
+      infoData &&
+      <SectionV2Wrapper>
+        <SectionHeader title={infoData.title} subtitle={infoData.subtitle}/>
+        <SectionTabs tabNames={tabNames} tabClick={tabClickHandle}/>
+        <SectionRooms roomList={infoData.dest_list?.[name]} itemWidth="33.33333%"/>
+        <SectionFooter name={name}/>
+      </SectionV2Wrapper>
+    }
+    </>
   )
 })
 

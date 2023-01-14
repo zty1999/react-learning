@@ -41,3 +41,11 @@ DEMOS.keys().forEach((key) => {
 });
 
 ```
+
+
+## 使用 react-transition-group:CSSTransition 动画不生效
+
+原因：使用 CSSTransition 生成的生命周期样式类不是 *-enter、*-enter-active、*-exit、*-exit-active 而是 enter、enter-acitve ... （使用 SwitchTransition 包裹 SwitchTransition 时 添加样式类正常），且 CSSTransition 内包裹的外层元素会被 CSSTransition 替换。
+
+![enter、enter-acitve](./docs/image/faq/2023-01-13-15-20-56.png)
+![exit、exit-active](./docs/image/faq/2023-01-13-15-24-25.png)

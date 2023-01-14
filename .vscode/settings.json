@@ -3,5 +3,6 @@
    "editor.tabSize": 2,
    "terminal.integrated.fontSize": 18,
    "debug.console.fontSize": 16,
-   "editor.fontFamily":  "Source Code Pro, 'Courier New', monospace",
+   "editor.fontFamily": "Source Code Pro, 'Courier New', monospace",
+   "pasteImage.basePath": "${currentFileDir}/docs/image", // pasteImage 插件设置图片复制地址
 }

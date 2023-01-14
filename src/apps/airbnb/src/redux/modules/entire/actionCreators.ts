@@ -1,4 +1,4 @@
-import { getEntireRoomList } from "../../../services/modules/entire"
+import { getEntireRoomList } from "@airbnb/services/modules/entire"
 import * as actionTypes from "./constants"
 
 export const changeCurrentPageAction = (currentPage) => ({
@@ -33,7 +33,5 @@ export const fetchEntireRoomListAction = (page = 0) =>{
     const totalCount = res.totalCount;
     dispatch(changeRoomListAction(roomList))
     dispatch(changeTotalCountAction(totalCount))
-    console.log("EntireRoomList",res);
-    
   }
 }
