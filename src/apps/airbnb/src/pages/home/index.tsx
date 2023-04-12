@@ -2,7 +2,7 @@ import { memo,useEffect } from "react";
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 
 
-import { isEmptyO } from '@airbnb/utils'
+import { isEmptyObj } from '@airbnb/utils'
 import { fetchHomeDataAction } from '@airbnb/redux/modules/home'
 
 import { HomeWrapper } from "./style";
@@ -46,12 +46,12 @@ const Home = memo(() => {
     <HomeWrapper>
       <HomeBanner />
       <div className="content">
-      { isEmptyO(discountInfo) && <HomeSectionV2 infoData={discountInfo}/>}
-      { isEmptyO(recommendInfo) && <HomeSectionV2 infoData={recommendInfo}/>}
-      { isEmptyO(longforInfo) && <HomeLongfor infoData={longforInfo}/> }
-      { isEmptyO(goodPriceInfo) && <HomeSectionV1 infoData={goodPriceInfo}/> }
-      { isEmptyO(highScoreInfo) && <HomeSectionV1 infoData={highScoreInfo}/> }
-      { isEmptyO(plusInfo) && <HomeSectionV3 infoData={plusInfo}/> }
+      { isEmptyObj(discountInfo) && <HomeSectionV2 infoData={discountInfo}/>}
+      { isEmptyObj(recommendInfo) && <HomeSectionV2 infoData={recommendInfo}/>}
+      { isEmptyObj(longforInfo) && <HomeLongfor infoData={longforInfo}/> }
+      { isEmptyObj(goodPriceInfo) && <HomeSectionV1 infoData={goodPriceInfo}/> }
+      { isEmptyObj(highScoreInfo) && <HomeSectionV1 infoData={highScoreInfo}/> }
+      { isEmptyObj(plusInfo) && <HomeSectionV3 infoData={plusInfo}/> }
       </div>
     </HomeWrapper>
   );

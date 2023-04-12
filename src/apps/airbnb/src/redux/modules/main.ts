@@ -1,6 +1,5 @@
 
 import { createSlice } from "@reduxjs/toolkit"
-import { useScrollPosition } from "../../hooks/useScrollPosition";
 
 const mainSlice = createSlice({
     name:'main',
